@@ -1,14 +1,25 @@
 import './combo-box.css';
-import { ChangeEvent, FC, useEffect, useRef, useState } from 'react';
+import React, {
+  ChangeEvent,
+  FC,
+  KeyboardEvent,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState
+} from 'react';
 
 export interface ComboBoxProps {
-  selected: string;
+  selected: string | null;
   setSelected: (str: string) => void;
-  placeholder?: string;
+  placeholder?: string | null;
   options?: Array<string>;
 }
 
-const useClickOutSide = (area, func: () => void) => {
+const useClickOutSide = (
+  area: MutableRefObject<HTMLElement>,
+  func: () => void
+) => {
   useEffect(() => {
     const listener = (event) => {
       if (!area.current || !area.current.contains(event.target)) {
@@ -33,8 +44,8 @@ const ComboBox: FC<ComboBoxProps> = ({
   options = ['Javascript', 'Angular', 'React'],
   ...props
 }) => {
-  const [isOpen, setOpen] = useState(false);
-  const [isCloseBtn, setCloseBtn] = useState(false);
+  const [isOpen, setOpen] = useState<boolean>(false);
+  const [isCloseBtn, setCloseBtn] = useState<boolean>(false);
   const div = useRef<HTMLDivElement>(null);
 
   if (selected) {
@@ -47,7 +58,7 @@ const ComboBox: FC<ComboBoxProps> = ({
     setOpen(false);
     setCloseBtn(false);
   };
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key === 'Enter') {
       if (options.length > 0) {
         setSelected(options[0]);
@@ -55,7 +66,7 @@ const ComboBox: FC<ComboBoxProps> = ({
         setSelected('');
       }
       handleClose();
-      event.target.blur();
+      (event.target as HTMLElement).blur();
     }
   };
   const handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -100,7 +111,7 @@ const ComboBox: FC<ComboBoxProps> = ({
       {isOpen && (
         <div className="combobox-content">
           {options.length ? (
-            options.map((option) => (
+            options.map((option: string) => (
               <div
                 className="combobox-item"
                 onClick={(e) => {
